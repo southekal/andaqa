@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block body %}
+
+{% include "navbar.html" %}
+
+    <div class="container">
+        {{t_chart|safe}}
+
+        {#
+        {% if timing_data %}
+            <hr>
+            {% for key, val in timing_data.iteritems() %}
+                <p>Test run on: {{ key }}</p>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Test Name</th>
+                            <th>Time Taken(seconds)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in val %}
+                            {% for k, v in data.iteritems() %}
+                                <tr>
+                                    <td><a href="/analytics/{{ k }}">{{ k }}</a></td>
+                                    <td>{{ v|float|round(2, 'ceil') }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endfor %}
+        {% endif %}
+        #}
+
+        {% if tests %}
+            <hr>
+            <p>Full Data (last 50 tests):</p>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Test Name</th>
+                        <th>Completion Time (s)</th>
+                        <th>Error</th>
+                        <th>Screenshot URL</th>
+                        <th>Tags</th>
+                        <th>Comments</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for v in tests %}
+                        {% if loop.index < 51 %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><a href="/analytics/data?date={{ v['date'] }}">{{ v["date"] }}</a></td>
+                                <td><a href="/analytics/{{ v['test_name'] }}">{{ v["test_name"] }}</a></td>
+                                <td>{{ v["test_time_diff"]|float|round(2, 'ceil') }}</td>
+                                <td>{{ v["errors"][0] }}</td>
+                                <td>{{ v["screenshots"][0] }}</td>
+                                <td>
+                                    {% for t in v["tags"] %}
+                                        <a href="/analytics/data?tags={{ t }}">{{ t }}</a>
+                                        {% if not loop.last %}
+                                            ,
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>{{ v["comments"] }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+
+        <div class="row">
+            {% if full_tag_holder %}
+                <div class="col-lg-6">
+                    <hr>
+                    <p>Tag Information:</p>
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Tag</th>
+                                <th>Test Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tag, test_name in full_tag_holder.iteritems() %}
+                                <tr>
+                                    <td><a href="/analytics/data?tags={{ tag }}">{{ tag }}</a></td>
+                                    <td>
+                                    {% for t in test_name %}
+                                        <a href="/analytics/{{ t }}">{{ t }}</a>
+                                        {% if not loop.last %}
+                                            ,
+                                        {% endif %}
+                                    {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+            {% if tests %}
+                <div class="col-lg-6">
+                    <hr>
+                    <p>Helper Data:</p>
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Information</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><a href="/analytics/data?time_greater_than=10">Tests taking > 10s</a></td>
+                            </tr>
+                            <tr>
+                                <td><a href="/analytics/data?time_greater_than=20">Tests taking > 20s</a></td>
+                            </tr>
+                            <tr>
+                                <td><a href="/analytics/data?time_greater_than=60">Tests taking > 1m</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+

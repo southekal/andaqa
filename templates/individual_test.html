@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block body %}
+
+{% include "navbar.html" %}
+
+    <div class="container">
+       {% if test_info %}
+            <h3>Test Name: {{ test_info[0]["test_name"] }}</h3>
+            <hr>
+
+            {% for v in test_info %}
+                <div class="jumbotron">
+                    <h5><b>Date:</b> <a href="/analytics/data?date={{ v['date'] }}">{{ v["date"] }}</a></h5>
+                    <h5><b>Test Name:</b> <a href="/analytics/{{ v['test_name'] }}">{{ v["test_name"] }}</a></h5>
+                    <h5><b>Completion Time (s):</b> {{ v["test_time_diff"]|float|round(2, 'ceil') }}</h5>
+                    <h5><b>Errors:</b> {{ v["errors"][0] }}</h5>
+                    <h5><b>Screenshots:</b> {{ v["screenshots"][0] }}</h5>
+                    <h5><b>Tags:</b>
+                        {% for t in v["tags"] %}
+                            <a href="/analytics/data?tags={{ t }}">{{ t }}</a>
+                            {% if not loop.last %}
+                                ,
+                            {% endif %}
+                        {% endfor %}
+                    </h5>
+                    <h5><b>Comments: </b>{{ v["comments"] }}</h5>
+                </div>
+            {% endfor %}
+
+        {% else %}
+            <h3>No data available</h3>
+        {% endif %}
+    </div>
+{% endblock %}
+

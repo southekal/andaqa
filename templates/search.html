@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block body %}
+
+{% include "navbar.html" %}
+
+    <div class="container">
+       {% if test_info %}
+            <h3>Search Information:</h3>
+            <hr>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Test Name</th>
+                        <th>Completion Time (s)</th>
+                        <th>Error</th>
+                        <th>Screenshot URL</th>
+                        <th>Tags</th>
+                        <th>Comments</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for v in test_info %}
+                        <tr>
+                            <td><a href="/analytics/data?date={{ v['date'] }}">{{ v["date"] }}</a></td>
+                            <td><a href="/analytics/{{ v['test_name'] }}">{{ v["test_name"] }}</a></td>
+                            <td>{{ v["test_time_diff"]|float|round(2, 'ceil') }}</td>
+                            <td>{{ v["errors"][0] }}</td>
+                            <td>{{ v["screenshots"][0] }}</td>
+                            <td>
+                                {% for t in v["tags"] %}
+                                    <a href="/analytics/data?tags={{ t }}">{{ t }}</a>
+                                    {% if not loop.last %}
+                                        ,
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>{{ v["comments"] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <h3>No data available</h3>
+        {% endif %}
+    </div>
+{% endblock %}
+
